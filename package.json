@@ -1,0 +1,38 @@
+{
+  "name": "nilsklimm",
+  "version": "1.0.0",
+  "main": "index.js",
+  "license": "MIT",
+  "scripts": {
+    "copytempalte": "cp src/index.html dist/index.html",
+    "start": "yarn copytempalte && webpack-dev-server --env dev --mode development"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.3.3",
+    "@babel/preset-env": "^7.3.1",
+    "@babel/preset-react": "^7.0.0",
+    "babel-eslint": "^10.0.1",
+    "babel-loader": "^8.0.5",
+    "circular-dependency-plugin": "^5.0.2",
+    "eslint": "^5.14.1",
+    "eslint-plugin-react": "^7.12.4",
+    "react-hot-loader": "^4.7.1",
+    "redux-devtools-extension": "^2.13.8",
+    "webpack": "^4.29.5",
+    "webpack-cli": "^3.2.3",
+    "webpack-dev-server": "^3.2.0"
+  },
+  "dependencies": {
+    "@babel/plugin-proposal-class-properties": "^7.3.3",
+    "@babel/polyfill": "^7.2.5",
+    "lowdb": "^1.0.0",
+    "prop-types": "^15.7.2",
+    "react": "^16.8.3",
+    "react-dom": "^16.8.3",
+    "react-redux": "^6.0.1",
+    "react-router": "^4.3.1",
+    "react-router-dom": "^4.3.1",
+    "redux": "^4.0.1",
+    "redux-saga": "^1.0.1"
+  }
+}
