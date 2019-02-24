@@ -2,16 +2,17 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 
-import { fetchPage } from './pageDuck';
+import { fetchPage, selectPage } from './pageDuck';
+import { PageTemplate } from './PageTemplate';
 
 class Page extends Component {
   static propTypes = {
-    params: PropTypes.shape({
-      pageId: PropTypes.string.isRequired,
-    }),
     actions: PropTypes.shape({
       fetchPage: PropTypes.func.isRequired,
-    }),
+    }).isRequired,
+    params: PropTypes.shape({
+      pageId: PropTypes.string.isRequired,
+    }).isRequired,
     page: PropTypes.shape({
       title: PropTypes.string.isRequired,
     }),
@@ -46,13 +47,13 @@ class Page extends Component {
 
   render() {
     const { page } = this.props;
-    return !!page && <div>{page.title}</div>;
+    return !!page && <PageTemplate {...page} />;
   }
 }
 
 export default connect(
   state => ({
-    page: state.page.page,
+    page: selectPage(state),
   }),
   dispatch => ({
     actions: {

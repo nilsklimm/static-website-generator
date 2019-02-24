@@ -7,6 +7,8 @@ import { Provider } from 'react-redux';
 import store from './store';
 import App from './App';
 
+console.log('WEBPACK_ENV', WEBPACK_ENV);
+
 ReactDOM.render(
   <Provider store={store}>
     <App />

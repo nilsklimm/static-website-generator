@@ -3,17 +3,17 @@ import { applyMiddleware, combineReducers, createStore } from 'redux';
 import { composeWithDevTools } from 'redux-devtools-extension';
 import createSagaMiddleware from 'redux-saga';
 
+import { navigationSaga, navigationReducer } from './modules/navigation/navigationDuck';
 import { settingsSaga, settingsReducer } from './modules/settings/settingsDuck';
 import { pageSaga, pageReducer } from './modules/page/pageDuck';
-import { pagesSaga, pagesReducer } from './modules/pages/pagesDuck';
 
 const sagaMiddleware = createSagaMiddleware();
 
 export default createStore(
   combineReducers({
+    ...navigationReducer,
     ...settingsReducer,
     ...pageReducer,
-    ...pagesReducer,
   }),
   composeWithDevTools(
     applyMiddleware(sagaMiddleware)
@@ -21,7 +21,7 @@ export default createStore(
 );
 
 sagaMiddleware.run(function* rootSaga() {
+  yield* navigationSaga();
   yield* settingsSaga();
   yield* pageSaga();
-  yield* pagesSaga();
 });

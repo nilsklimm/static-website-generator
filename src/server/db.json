@@ -1,0 +1,17 @@
+{
+  "settings": {
+    "siteName": "Static Website Generator"
+  },
+  "pages": [
+    {
+      "id": "demo1",
+      "title": "Demo Page 1",
+      "body": "Lorem ipsum dolor sit amet"
+    },
+    {
+      "id": "demo2",
+      "title": "Demo Page 2",
+      "body": "Consetetur sadipscing elitr"
+    }
+  ]
+}

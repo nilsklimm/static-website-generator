@@ -1,5 +1,5 @@
-//import "regenerator-runtime/runtime";
 import { all, call, put, takeLatest } from 'redux-saga/effects';
+import { settingsService } from '../../services/settingsService';
 
 const SETTINGS_FETCH_REQUESTED = 'SETTINGS_FETCH_REQUESTED';
 const SETTINGS_FETCH_SUCCEEDED = 'SETTINGS_FETCH_SUCCEEDED';
@@ -9,19 +9,21 @@ const SETTINGS_PERSIST_REQUESTED = 'SETTINGS_PERSIST_REQUESTED';
 const SETTINGS_PERSIST_SUCCEEDED = 'SETTINGS_PERSIST_SUCCEEDED';
 const SETTINGS_PERSIST_FAILED = 'SETTINGS_PERSIST_FAILED';
 
-const Api = {
-  fetchSettings: async () => ({
+/*
+const settingsService = {
+  read: async () => ({
     siteName: 'My Site',
   }),
-  persistSettings: async () => ({
+  update: async () => ({
     message: 'persisting settings was successful',
   }),
 }
+*/
 
 const initialState = {
   loading: false,
   error: false,
-  settings: null,
+  settings: undefined,
 }
 
 export const settingsReducer = {
@@ -31,7 +33,7 @@ export const settingsReducer = {
         return {
           loading: true,
           error: false,
-          settings: null,
+          settings: undefined,
         };
       case SETTINGS_FETCH_SUCCEEDED:
         return {
@@ -43,7 +45,7 @@ export const settingsReducer = {
         return {
           loading: false,
           error: true,
-          settings: null,
+          settings: undefined,
         };
       default:
         return state;
@@ -65,7 +67,7 @@ function fetchSettingsError() {
 
 function* fetchSettingsAsync() {
   try {
-    const settings = yield call(Api.fetchSettings);
+    const settings = yield call(settingsService.read);
     yield put(fetchSettingsSuccess(settings));
   } catch (e) {
     yield put(fetchSettingsError(e.message));
@@ -74,7 +76,7 @@ function* fetchSettingsAsync() {
 
 function* persistSettings(action) {
   try {
-    yield call(Api.persistSettings, action.payload.settings);
+    yield call(settingsService.update, action.payload.settings);
     yield put({ type: SETTINGS_PERSIST_SUCCEEDED });
   } catch (e) {
     yield put({ type: SETTINGS_PERSIST_FAILED, message: e.message });
@@ -88,8 +90,13 @@ export function* settingsSaga() {
   ]);
 }
 
+export function selectSettings(state) {
+  return state.settings.settings;
+}
+
 export default {
   settingsReducer,
   settingsSaga,
   fetchSettings,
+  selectSettings,
 }

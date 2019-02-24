@@ -1,5 +1,5 @@
-//import "regenerator-runtime/runtime";
 import { all, call, put, takeLatest } from 'redux-saga/effects';
+import { pageService } from '../../services/pageService';
 
 export const PAGE_FETCH_REQUESTED = 'PAGE_FETCH_REQUESTED';
 export const PAGE_FETCH_SUCCEEDED = 'PAGE_FETCH_SUCCEEDED';
@@ -9,8 +9,9 @@ export const PAGE_PERSIST_REQUESTED = 'PAGE_PERSIST_REQUESTED';
 export const PAGE_PERSIST_SUCCEEDED = 'PAGE_PERSIST_SUCCEEDED';
 export const PAGE_PERSIST_FAILED = 'PAGE_PERSIST_FAILED';
 
-const Api = {
-  fetchPage: async (pageId) => {
+/*
+const pageService = {
+  read: async (pageId) => {
     switch (pageId) {
       case 'page1':
         return {
@@ -32,15 +33,16 @@ const Api = {
         throw new Error(`Page ${pageId} not found`);
     }
   },
-  persistPage: async () => ({
+  update: async () => ({
     message: 'persisting page was successful',
   }),
 }
+*/
 
 const initialState = {
   loading: false,
   error: false,
-  page: null,
+  page: undefined,
 }
 
 export const pageReducer = {
@@ -50,7 +52,7 @@ export const pageReducer = {
         return {
           loading: true,
           error: false,
-          page: null,
+          page: undefined,
         };
       case PAGE_FETCH_SUCCEEDED:
         return {
@@ -62,7 +64,7 @@ export const pageReducer = {
         return {
           loading: false,
           error: true,
-          page: null,
+          page: undefined,
         };
       default:
         return state;
@@ -84,7 +86,7 @@ function fetchPageError() {
 
 function* fetchPageAsync(action) {
   try {
-    const page = yield call(Api.fetchPage, action.payload.pageId);
+    const page = yield call(pageService.read, action.payload.pageId);
     yield put(fetchPageSuccess(page));
   } catch (e) {
     yield put(fetchPageError(e.message));
@@ -93,7 +95,7 @@ function* fetchPageAsync(action) {
 
 function* persistPageAsync(action) {
   try {
-    yield call(Api.persistPage, action.payload.page);
+    yield call(pageService.update, action.payload.page);
     yield put({ type: PAGE_PERSIST_SUCCEEDED });
   } catch (e) {
     yield put({ type: PAGE_PERSIST_FAILED, message: e.message });
@@ -107,8 +109,13 @@ export function* pageSaga() {
   ]);
 }
 
+export function selectPage(state) {
+  return state.page.page;
+}
+
 export default {
   pageReducer,
   pageSaga,
-  fetchPage
+  fetchPage,
+  selectPage,
 };

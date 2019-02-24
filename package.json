@@ -4,8 +4,14 @@
   "main": "index.js",
   "license": "MIT",
   "scripts": {
-    "copytempalte": "cp src/index.html dist/index.html",
-    "start": "yarn copytempalte && webpack-dev-server --env dev --mode development"
+    "cleanDistDir": "mkdir dist/ -p && rimraf dist/**",
+    "cleanStaticDir": "mkdir STATIC/ -p && rimraf STATIC/**",
+    "test:lint": "eslint",
+    "test": "npm run test:lint",
+    "build": "npm run cleanDistDir && webpack --mode production -p --env.NODE_ENV=production",
+    "develop": "webpack-dev-server --mode development --env.NODE_ENV=development",
+    "start": "node src/server/startServer.js",
+    "renderToStatic": "npm run cleanStaticDir && babel-node src/server/renderToStatic.js"
   },
   "devDependencies": {
     "@babel/core": "^7.3.3",
@@ -16,6 +22,7 @@
     "circular-dependency-plugin": "^5.0.2",
     "eslint": "^5.14.1",
     "eslint-plugin-react": "^7.12.4",
+    "html-webpack-plugin": "^3.2.0",
     "react-hot-loader": "^4.7.1",
     "redux-devtools-extension": "^2.13.8",
     "webpack": "^4.29.5",
@@ -23,9 +30,13 @@
     "webpack-dev-server": "^3.2.0"
   },
   "dependencies": {
+    "@babel/node": "^7.2.2",
     "@babel/plugin-proposal-class-properties": "^7.3.3",
     "@babel/polyfill": "^7.2.5",
+    "hapi": "^18.1.0",
+    "inert": "^5.1.2",
     "lowdb": "^1.0.0",
+    "process": "^0.11.10",
     "prop-types": "^15.7.2",
     "react": "^16.8.3",
     "react-dom": "^16.8.3",
@@ -33,6 +44,7 @@
     "react-router": "^4.3.1",
     "react-router-dom": "^4.3.1",
     "redux": "^4.0.1",
-    "redux-saga": "^1.0.1"
+    "redux-saga": "^1.0.1",
+    "rimraf": "^2.6.3"
   }
 }

@@ -1,15 +1,15 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import { NavLink } from "react-router-dom";
 
-import { fetchPages } from './pagesDuck';
+import { fetchNavigationPages, selectNavigationPages } from './navigationDuck';
+import { NavigationTemplate } from './NavigationTemplate';
 
 class Pages extends Component {
   static propTypes = {
     actions: PropTypes.shape({
       fetchPages: PropTypes.func.isRequired,
-    }),
+    }).isRequired,
     pages: PropTypes.arrayOf(
       PropTypes.shape({
         id: PropTypes.string.isRequired,
@@ -24,35 +24,27 @@ class Pages extends Component {
 
   componentDidMount() {
     const {
-      actions: { fetchPages },
+      actions: { fetchNavigationPages },
       pages,
     } = this.props;
     
     if (pages.length === 0)
-      fetchPages();
+      fetchNavigationPages();
   }
 
   render() {
     const { pages } = this.props;
-    return !!pages && pages.length > 0 && (
-      <ul>
-        {pages.map(({ id, title }) => (
-          <li key={id}>
-            <NavLink to={`/pages/${id}`}>{title}</NavLink>
-          </li>
-        ))}
-      </ul>
-    );
+    return <NavigationTemplate {...{ pages }} />;
   }
 }
 
 export default connect(
   state => ({
-    pages: state.pages.pages,
+    pages: selectNavigationPages(state),
   }),
   dispatch => ({
     actions: {
-      fetchPages: pageId => dispatch(fetchPages(pageId)),
+      fetchNavigationPages: pageId => dispatch(fetchNavigationPages(pageId)),
     },
   }),
 )(Pages);

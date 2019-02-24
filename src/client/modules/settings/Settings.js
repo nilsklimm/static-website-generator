@@ -2,18 +2,21 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 
-import { fetchSettings } from './settingsDuck';
+import { fetchSettings, selectSettings } from './settingsDuck';
+import { SettingsTemplate } from './SettingsTemplate';
 
 class Settings extends Component {
   static propTypes = {
     actions: PropTypes.shape({
       fetchSettings: PropTypes.func.isRequired,
+    }).isRequired,
+    settings: PropTypes.shape({
+      siteName: PropTypes.string,
     }),
-    settings: PropTypes.shape(),
   }
 
   static defaultProps = {
-    settings: undefined,
+    settings: {},
   }
 
   componentDidMount() {
@@ -22,13 +25,14 @@ class Settings extends Component {
   }
 
   render() {
-    return <div>Settings</div>;
+    const { settings } = this.props;
+    return !!settings && <SettingsTemplate {...{ settings } } />;
   }
 }
 
 export default connect(
   state => ({
-    settings: state.settings.settings,
+    settings: selectSettings(state),
   }),
   dispatch => ({
     actions: {
