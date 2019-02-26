@@ -1,13 +1,17 @@
-import { all, call, put, takeLatest } from 'redux-saga/effects';
-import { pageService } from '../../services/pageService';
+import { all, call, put, select, takeLatest } from 'redux-saga/effects';
+import { pagesService } from '../../services/pagesService';
 
-export const PAGE_FETCH_REQUESTED = 'PAGE_FETCH_REQUESTED';
-export const PAGE_FETCH_SUCCEEDED = 'PAGE_FETCH_SUCCEEDED';
-export const PAGE_FETCH_FAILED = 'PAGE_FETCH_FAILED';
+const PAGE_READ_REQUESTED = 'PAGE_READ_REQUESTED';
+const PAGE_READ_SUCCEEDED = 'PAGE_READ_SUCCEEDED';
+const PAGE_READ_FAILED = 'PAGE_READ_FAILED';
 
-export const PAGE_PERSIST_REQUESTED = 'PAGE_PERSIST_REQUESTED';
-export const PAGE_PERSIST_SUCCEEDED = 'PAGE_PERSIST_SUCCEEDED';
-export const PAGE_PERSIST_FAILED = 'PAGE_PERSIST_FAILED';
+const PAGE_UPDATE_REQUESTED = 'PAGE_UPDATE_REQUESTED';
+const PAGE_UPDATE_SUCCEEDED = 'PAGE_UPDATE_SUCCEEDED';
+const PAGE_UPDATE_FAILED = 'PAGE_UPDATE_FAILED';
+
+const PAGE_REVERT = 'PAGE_REVERT';
+
+const PAGE_TEMP_FIELD_VALUE_CHANGE = 'PAGE_TEMP_FIELD_VALUE_CHANGE';
 
 /*
 const pageService = {
@@ -34,7 +38,7 @@ const pageService = {
     }
   },
   update: async () => ({
-    message: 'persisting page was successful',
+    message: 'updateing page was successful',
   }),
 }
 */
@@ -42,29 +46,48 @@ const pageService = {
 const initialState = {
   loading: false,
   error: false,
-  page: undefined,
-}
+  modified: false,
+  page: {},
+  tempPage: {},
+};
 
 export const pageReducer = {
   page: (state = initialState, action) => {
     switch (action.type) {
-      case PAGE_FETCH_REQUESTED:
+      case PAGE_READ_REQUESTED:
         return {
+          ...initialState,
           loading: true,
-          error: false,
-          page: undefined,
         };
-      case PAGE_FETCH_SUCCEEDED:
+      case PAGE_READ_SUCCEEDED:
         return {
-          loading: false,
-          error: false,
+          ...initialState,
           page: action.payload,
+          tempPage: action.payload,
         };
-      case PAGE_FETCH_FAILED:
+      case PAGE_READ_FAILED:
         return {
-          loading: false,
+          ...initialState,
           error: true,
-          page: undefined,
+        };
+      case PAGE_UPDATE_SUCCEEDED:
+        return {
+          ...state,
+          page: state.tempPage,
+        };
+      case PAGE_REVERT:
+        return {
+          ...state,
+          tempPage: state.page,
+        };
+      case PAGE_TEMP_FIELD_VALUE_CHANGE:
+        return {
+          ...state,
+          modified: true,
+          tempPage: {
+            ...state.tempPage,
+            [action.payload.fieldName]: action.payload.value,
+          },
         };
       default:
         return state;
@@ -72,50 +95,72 @@ export const pageReducer = {
   },
 };
 
-export function fetchPage(pageId) {
-  return { type: PAGE_FETCH_REQUESTED, payload: { pageId } };
+export function readPage(pageId) {
+  return { type: PAGE_READ_REQUESTED, payload: { pageId } };
 }
 
-function fetchPageSuccess(payload) {
-  return { type: PAGE_FETCH_SUCCEEDED, payload };
+function readPageSuccess(payload) {
+  return { type: PAGE_READ_SUCCEEDED, payload };
 }
 
-function fetchPageError() {
-  return { type: PAGE_FETCH_FAILED };
+function readPageError() {
+  return { type: PAGE_READ_FAILED };
 }
 
-function* fetchPageAsync(action) {
+function* readPageAsync(action) {
   try {
-    const page = yield call(pageService.read, action.payload.pageId);
-    yield put(fetchPageSuccess(page));
+    const page = yield call(pagesService.read, action.payload.pageId);
+    yield put(readPageSuccess(page));
   } catch (e) {
-    yield put(fetchPageError(e.message));
+    yield put(readPageError(e.message));
   }
 }
 
-function* persistPageAsync(action) {
+export function updatePage() {
+  return { type: PAGE_UPDATE_REQUESTED };
+}
+
+function updatePageSuccess() {
+  return { type: PAGE_UPDATE_SUCCEEDED };
+}
+
+function updatePageError() {
+  return { type: PAGE_UPDATE_FAILED };
+}
+
+function* updatePageAsync() {
   try {
-    yield call(pageService.update, action.payload.page);
-    yield put({ type: PAGE_PERSIST_SUCCEEDED });
+    const page = yield select(selectPage);
+    yield call(pagesService.update, page.id, page);
+    yield put(updatePageSuccess());
   } catch (e) {
-    yield put({ type: PAGE_PERSIST_FAILED, message: e.message });
+    yield put(updatePageError(e.message));
   }
+}
+
+export function revertPage() {
+  return { type: PAGE_REVERT };
+}
+
+export function changeTempFieldValue(fieldName, value) {
+  return { type: PAGE_TEMP_FIELD_VALUE_CHANGE, payload: { fieldName, value } };
 }
 
 export function* pageSaga() {
   yield all([
-    yield takeLatest(PAGE_FETCH_REQUESTED, fetchPageAsync),
-    yield takeLatest(PAGE_PERSIST_REQUESTED, persistPageAsync),
+    yield takeLatest(PAGE_READ_REQUESTED, readPageAsync),
+    yield takeLatest(PAGE_UPDATE_REQUESTED, updatePageAsync),
   ]);
 }
 
 export function selectPage(state) {
-  return state.page.page;
+  return state.page.tempPage;
 }
 
 export default {
   pageReducer,
   pageSaga,
-  fetchPage,
+  readPage,
+  updatePage,
   selectPage,
 };

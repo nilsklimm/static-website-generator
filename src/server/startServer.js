@@ -6,7 +6,7 @@ const db = configureDatabase(defaultDbPath, defaultDbData);
 
 const server = Hapi.server({
   port: 8080,
-  host: 'localhost'
+  host: 'localhost',
 });
 
 const init = async () => {

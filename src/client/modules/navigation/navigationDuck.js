@@ -1,9 +1,9 @@
 import { call, put, takeLatest } from 'redux-saga/effects';
 import { pagesService } from '../../services/pagesService';
 
-export const NAVIGATION_PAGES_FETCH_REQUESTED = 'NAVIGATION_PAGES_FETCH_REQUESTED';
-export const NAVIGATION_PAGES_FETCH_SUCCEEDED = 'NAVIGATION_PAGES_FETCH_SUCCEEDED';
-export const NAVIGATION_PAGES_FETCH_FAILED = 'NAVIGATION_PAGES_FETCH_FAILED';
+export const NAVIGATION_PAGES_READ_REQUESTED = 'NAVIGATION_PAGES_READ_REQUESTED';
+export const NAVIGATION_PAGES_READ_SUCCEEDED = 'NAVIGATION_PAGES_READ_SUCCEEDED';
+export const NAVIGATION_PAGES_READ_FAILED = 'NAVIGATION_PAGES_READ_FAILED';
 
 /*
 const pagesService = {
@@ -18,24 +18,24 @@ const initialState = {
   loading: false,
   error: false,
   pages: [],
-}
+};
 
 export const navigationReducer = {
   navigation: (state = initialState, action) => {
     switch (action.type) {
-      case NAVIGATION_PAGES_FETCH_REQUESTED:
+      case NAVIGATION_PAGES_READ_REQUESTED:
         return {
           loading: true,
           error: false,
           pages: [],
         };
-      case NAVIGATION_PAGES_FETCH_SUCCEEDED:
+      case NAVIGATION_PAGES_READ_SUCCEEDED:
         return {
           loading: false,
           error: false,
           pages: action.payload,
         };
-      case NAVIGATION_PAGES_FETCH_FAILED:
+      case NAVIGATION_PAGES_READ_FAILED:
         return {
           loading: false,
           error: true,
@@ -47,29 +47,29 @@ export const navigationReducer = {
   },
 };
 
-export function fetchNavigationPages(pageId) {
-  return { type: NAVIGATION_PAGES_FETCH_REQUESTED, payload: { pageId } };
+export function readNavigationPages(pageId) {
+  return { type: NAVIGATION_PAGES_READ_REQUESTED, payload: { pageId } };
 }
 
-function fetchNavigationPagesSuccess(payload) {
-  return { type: NAVIGATION_PAGES_FETCH_SUCCEEDED, payload };
+function readNavigationPagesSuccess(payload) {
+  return { type: NAVIGATION_PAGES_READ_SUCCEEDED, payload };
 }
 
-function fetchNavigationPagesError() {
-  return { type: NAVIGATION_PAGES_FETCH_FAILED };
+function readNavigationPagesError() {
+  return { type: NAVIGATION_PAGES_READ_FAILED };
 }
 
-function* fetchNavigationPagesAsync() {
+function* readNavigationPagesAsync() {
   try {
-    const pages = yield call(pagesService.read);
-    yield put(fetchNavigationPagesSuccess(pages));
+    const pages = yield call(pagesService.readAll);
+    yield put(readNavigationPagesSuccess(pages));
   } catch (e) {
-    yield put(fetchNavigationPagesError(e.message));
+    yield put(readNavigationPagesError(e.message));
   }
 }
 
 export function* navigationSaga() {
-  yield takeLatest(NAVIGATION_PAGES_FETCH_REQUESTED, fetchNavigationPagesAsync);
+  yield takeLatest(NAVIGATION_PAGES_READ_REQUESTED, readNavigationPagesAsync);
 }
 
 export function selectNavigationPages(state) {
@@ -79,6 +79,6 @@ export function selectNavigationPages(state) {
 export default {
   navigationReducer,
   navigationSaga,
-  fetchNavigationPages,
+  readNavigationPages,
   selectNavigationPages,
 };

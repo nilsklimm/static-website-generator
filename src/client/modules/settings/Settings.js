@@ -2,13 +2,23 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 
-import { fetchSettings, selectSettings } from './settingsDuck';
+import {
+  selectSettings,
+  readSettings,
+  updateSettings,
+  revertSettings,
+  changeTempFieldValue,
+} from './settingsDuck';
+
 import { SettingsTemplate } from './SettingsTemplate';
 
 class Settings extends Component {
   static propTypes = {
     actions: PropTypes.shape({
-      fetchSettings: PropTypes.func.isRequired,
+      readSettings: PropTypes.func.isRequired,
+      updateSettings: PropTypes.func.isRequired,
+      revertSettings: PropTypes.func.isRequired,
+      changeFieldValue: PropTypes.func.isRequired,
     }).isRequired,
     settings: PropTypes.shape({
       siteName: PropTypes.string,
@@ -20,13 +30,27 @@ class Settings extends Component {
   }
 
   componentDidMount() {
-    const { actions: { fetchSettings } } = this.props;
-    fetchSettings();
+    const { actions: { readSettings } } = this.props;
+    readSettings();
   }
 
   render() {
-    const { settings } = this.props;
-    return !!settings && <SettingsTemplate {...{ settings } } />;
+    const {
+      actions: { updateSettings, revertSettings, changeFieldValue },
+      settings,
+    } = this.props;
+
+    return !!settings && (
+      <SettingsTemplate {...{
+        actions: {
+          updateSettings,
+          revertSettings,
+          changeFieldValue,
+        },
+        settings,
+      } }
+      />
+    );
   }
 }
 
@@ -36,7 +60,10 @@ export default connect(
   }),
   dispatch => ({
     actions: {
-      fetchSettings: () => dispatch(fetchSettings()),
+      readSettings: () => dispatch(readSettings()),
+      updateSettings: () => dispatch(updateSettings()),
+      revertSettings: () => dispatch(revertSettings()),
+      changeFieldValue: (fieldName, value) => dispatch(changeTempFieldValue(fieldName, value)),
     },
   }),
 )(Settings);

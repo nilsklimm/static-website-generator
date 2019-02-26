@@ -3,31 +3,36 @@ import PropTypes from 'prop-types';
 
 import { LinkList } from './LinkList';
 
-export function StaticWrapper({
+export function StaticPage({
   siteName,
-  pageTitle,
   linkList,
-  children,
+  page: {
+    title,
+    body,
+  },
 }) {
   return (
     <html>
       <head>
-        <title>{`${siteName} - ${pageTitle}`}</title>
+        <title>{`${siteName} - ${title}`}</title>
       </head>
       <body>
         <LinkList list={linkList} />
-        {children}
+        <h1>{title}</h1>
+        <p>{body}</p>
       </body>
     </html>
   );
 }
 
-StaticWrapper.propTypes = {
+StaticPage.propTypes = {
   siteName: PropTypes.string.isRequired,
-  pageTitle: PropTypes.string.isRequired,
   linkList: PropTypes.arrayOf(PropTypes.shape({
     url: PropTypes.string.isRequired,
     label: PropTypes.string.isRequired,
   })).isRequired,
-  children: PropTypes.node.isRequired,
-}
+  page: PropTypes.shape({
+    title: PropTypes.string.isRequired,
+    body: PropTypes.string.isRequired,
+  }),
+};

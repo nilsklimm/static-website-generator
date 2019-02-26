@@ -14,13 +14,13 @@ function wrapComponent(Body) {
         <Navigation key={url} />
         <Body params={params} />
       </Fragment>
-    )
+    );
   }
 
   Wrapper.propTypes = {
     match: PropTypes.shape().isRequired,
     Body: PropTypes.func.isRequired,
-  }
+  };
 
   return Wrapper;
 }

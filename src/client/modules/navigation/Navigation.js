@@ -2,13 +2,13 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 
-import { fetchNavigationPages, selectNavigationPages } from './navigationDuck';
+import { selectNavigationPages, readNavigationPages } from './navigationDuck';
 import { NavigationTemplate } from './NavigationTemplate';
 
 class Pages extends Component {
   static propTypes = {
     actions: PropTypes.shape({
-      fetchPages: PropTypes.func.isRequired,
+      readPages: PropTypes.func.isRequired,
     }).isRequired,
     pages: PropTypes.arrayOf(
       PropTypes.shape({
@@ -24,12 +24,12 @@ class Pages extends Component {
 
   componentDidMount() {
     const {
-      actions: { fetchNavigationPages },
+      actions: { readNavigationPages },
       pages,
     } = this.props;
     
     if (pages.length === 0)
-      fetchNavigationPages();
+      readNavigationPages();
   }
 
   render() {
@@ -44,7 +44,7 @@ export default connect(
   }),
   dispatch => ({
     actions: {
-      fetchNavigationPages: pageId => dispatch(fetchNavigationPages(pageId)),
+      readNavigationPages: pageId => dispatch(readNavigationPages(pageId)),
     },
   }),
 )(Pages);

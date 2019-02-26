@@ -2,19 +2,29 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 
-import { fetchPage, selectPage } from './pageDuck';
+import {
+  selectPage,
+  readPage,
+  updatePage,
+  revertPage,
+  changeTempFieldValue,
+} from './pageDuck';
+
 import { PageTemplate } from './PageTemplate';
 
 class Page extends Component {
   static propTypes = {
     actions: PropTypes.shape({
-      fetchPage: PropTypes.func.isRequired,
+      readPage: PropTypes.func.isRequired,
+      updatePage: PropTypes.func.isRequired,
+      changeFieldValue: PropTypes.func.isRequired,
     }).isRequired,
     params: PropTypes.shape({
       pageId: PropTypes.string.isRequired,
     }).isRequired,
     page: PropTypes.shape({
       title: PropTypes.string.isRequired,
+      body: PropTypes.string.isRequired,
     }),
   }
   
@@ -25,10 +35,10 @@ class Page extends Component {
   componentDidMount() {
     const {
       params: { pageId },
-      actions: { fetchPage },
+      actions: { readPage },
     } = this.props;
     
-    fetchPage(pageId);
+    readPage(pageId);
   }
 
   componentDidUpdate(prevProps) {
@@ -37,17 +47,32 @@ class Page extends Component {
     } = prevProps;
 
     const {
+      actions: { readPage },
       params: { pageId },
-      actions: { fetchPage },
     } = this.props;
 
-    if (pageId !== prevPageId)
-      fetchPage(pageId);
+    if (pageId !== prevPageId) {
+      readPage(pageId);
+    }
   }
 
   render() {
-    const { page } = this.props;
-    return !!page && <PageTemplate {...page} />;
+    const {
+      actions: { updatePage, revertPage, changeFieldValue },
+      page,
+    } = this.props;
+
+    return !!page && (
+      <PageTemplate {...{
+        actions: {
+          updatePage,
+          revertPage,
+          changeFieldValue,
+        },
+        page,
+      } }
+      />
+    );
   }
 }
 
@@ -57,7 +82,10 @@ export default connect(
   }),
   dispatch => ({
     actions: {
-      fetchPage: pageId => dispatch(fetchPage(pageId)),
+      readPage: pageId => dispatch(readPage(pageId)),
+      updatePage: () => dispatch(updatePage()),
+      revertPage: () => dispatch(revertPage()),
+      changeFieldValue: (fieldName, value) => dispatch(changeTempFieldValue(fieldName, value)),
     },
   }),
 )(Page);

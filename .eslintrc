@@ -23,7 +23,8 @@
     "console": "readable"
   },
   "rules": {
-    "comma-dangle": ["error", "only-multiline"],
+    "semi": ["error", "always"],
+    "comma-dangle": ["error", "always-multiline"],
     "object-curly-spacing": ["error", "always"],
     "no-console": "off"
   }

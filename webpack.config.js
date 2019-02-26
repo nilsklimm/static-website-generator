@@ -17,12 +17,12 @@ module.exports = env => {
         {
           test: /\.js$/,
           exclude: /node_modules/,
-          use: ['babel-loader']
-        }
-      ]
+          use: ['babel-loader'],
+        },
+      ],
     },
     resolve: {
-      extensions: ['*', '.js']
+      extensions: ['*', '.js'],
     },
     output: {
       filename: '[name].js',
@@ -45,14 +45,14 @@ module.exports = env => {
         'WEBPACK_ENV': JSON.stringify({
           mode: NODE_ENV,
         }),
-      })
+      }),
     ],
     devServer: {
       contentBase: './dist',
       hot: true,
       historyApiFallback: {
-        index: '/'
-      }
-    }
+        index: '/',
+      },
+    },
   };
-}
+};

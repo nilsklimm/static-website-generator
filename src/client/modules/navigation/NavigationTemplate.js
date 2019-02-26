@@ -25,7 +25,7 @@ export function NavigationTemplate({ pages }) {
         </ul>
       </nav>
     </Fragment>
-  )
+  );
 }
 
 NavigationTemplate.propTypes = {
