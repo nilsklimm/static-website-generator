@@ -6,7 +6,7 @@ import {
   selectPage,
   readPage,
   updatePage,
-  revertPage,
+  revertTempPage,
   changeTempFieldValue,
 } from './pageDuck';
 
@@ -17,6 +17,7 @@ class Page extends Component {
     actions: PropTypes.shape({
       readPage: PropTypes.func.isRequired,
       updatePage: PropTypes.func.isRequired,
+      revertPage: PropTypes.func.isRequired,
       changeFieldValue: PropTypes.func.isRequired,
     }).isRequired,
     params: PropTypes.shape({
@@ -58,22 +59,8 @@ class Page extends Component {
   }
 
   render() {
-    const {
-      actions: { updatePage, revertPage, changeFieldValue },
-      page,
-    } = this.props;
-
-    return !!page && (
-      <PageTemplate {...{
-        actions: {
-          updatePage,
-          revertPage,
-          changeFieldValue,
-        },
-        page,
-      } }
-      />
-    );
+    const { actions, page } = this.props;
+    return !!page && <PageTemplate {...{ actions, page }} />;
   }
 }
 
@@ -85,7 +72,7 @@ export default connect(
     actions: {
       readPage: pageId => dispatch(readPage(pageId)),
       updatePage: () => dispatch(updatePage()),
-      revertPage: () => dispatch(revertPage()),
+      revertPage: () => dispatch(revertTempPage()),
       changeFieldValue: (fieldName, value) => dispatch(changeTempFieldValue(fieldName, value)),
     },
   }),

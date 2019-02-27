@@ -1,4 +1,6 @@
 import Hapi from 'hapi';
+import opn from 'opn';
+
 import { configureDatabase, defaultDBPath, defaultDBData } from './config/database';
 import { configureRoutes } from './config/routes';
 
@@ -24,3 +26,5 @@ process.on('unhandledRejection', (err) => {
 });
 
 init();
+
+opn('http://localhost:8080');

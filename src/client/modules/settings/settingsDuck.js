@@ -9,7 +9,7 @@ const SETTINGS_UPDATE_REQUESTED = 'SETTINGS_UPDATE_REQUESTED';
 const SETTINGS_UPDATE_SUCCEEDED = 'SETTINGS_UPDATE_SUCCEEDED';
 const SETTINGS_UPDATE_FAILED = 'SETTINGS_UPDATE_FAILED';
 
-const SETTINGS_REVERT = 'SETTINGS_REVERT';
+const SETTINGS_REVERT_TEMP_CHANGES = 'SETTINGS_REVERT_TEMP_CHANGES';
 const SETTINGS_TEMP_FIELD_VALUE_CHANGE = 'SETTINGS_TEMP_FIELD_VALUE_CHANGE';
 
 const initialState = {
@@ -31,20 +31,22 @@ export const settingsReducer = {
       case SETTINGS_READ_SUCCEEDED:
         return {
           ...initialState,
-          settings: action.payload,
-          tempSettings: action.payload,
+          settings: action.payload.settings,
+          tempSettings: action.payload.settings,
         };
       case SETTINGS_READ_FAILED:
         return {
           ...initialState,
           error: true,
+          errorMsg: action.payload.errorMsg,
         };
       case SETTINGS_UPDATE_SUCCEEDED:
         return {
-          ...state,
+          ...initialState,
           settings: state.tempSettings,
+          tempSettings: state.tempSettings,
         };
-      case SETTINGS_REVERT:
+      case SETTINGS_REVERT_TEMP_CHANGES:
         return {
           ...state,
           tempSettings: state.settings,
@@ -68,12 +70,12 @@ export function readSettings() {
   return { type: SETTINGS_READ_REQUESTED };
 }
 
-function readSettingsSuccess(payload) {
-  return { type: SETTINGS_READ_SUCCEEDED, payload };
+function readSettingsSuccess(settings) {
+  return { type: SETTINGS_READ_SUCCEEDED, payload: { settings } };
 }
 
-function readSettingsError() {
-  return { type: SETTINGS_READ_FAILED };
+function readSettingsError(errorMsg) {
+  return { type: SETTINGS_READ_FAILED, payload: { errorMsg } };
 }
 
 function* readSettingsAsync() {
@@ -93,8 +95,8 @@ function updateSettingsSuccess() {
   return { type: SETTINGS_UPDATE_SUCCEEDED };
 }
 
-function updateSettingsError() {
-  return { type: SETTINGS_UPDATE_FAILED };
+function updateSettingsError(errorMsg) {
+  return { type: SETTINGS_UPDATE_FAILED, payload: { errorMsg } };
 }
 
 function* updateSettingsAsync() {
@@ -107,8 +109,8 @@ function* updateSettingsAsync() {
   }
 }
 
-export function revertSettings() {
-  return { type: SETTINGS_REVERT };
+export function revertTempSettings() {
+  return { type: SETTINGS_REVERT_TEMP_CHANGES };
 }
 
 export function changeTempFieldValue(fieldName, value) {
@@ -130,5 +132,6 @@ export default {
   settingsReducer,
   settingsSaga,
   readSettings,
+  updateSettings,
   selectSettings,
 };

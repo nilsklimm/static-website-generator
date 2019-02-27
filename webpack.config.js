@@ -55,6 +55,7 @@ module.exports = env => {
     devServer: {
       contentBase: './dist',
       hot: true,
+      open: true,
       historyApiFallback: {
         index: '/',
       },

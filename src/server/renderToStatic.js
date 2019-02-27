@@ -32,7 +32,7 @@ pages.forEach((page) => {
   ));
 
   if (slug.match(/^\w+$/)) {
-    const path = process.cwd() + `/STATIC/${slug}.html`;
+    const path = process.cwd() + `/STATIC_WEBSITE/${slug}.html`;
     const html = `<!DOCTYPE html>${reactDom}`;
     
     fs.writeFile(path, html, (err) => {

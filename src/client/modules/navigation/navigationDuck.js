@@ -1,9 +1,9 @@
 import { call, put, takeLatest } from 'redux-saga/effects';
 import { pagesService } from '../../services/pagesService';
 
-export const NAVIGATION_PAGES_READ_REQUESTED = 'NAVIGATION_PAGES_READ_REQUESTED';
-export const NAVIGATION_PAGES_READ_SUCCEEDED = 'NAVIGATION_PAGES_READ_SUCCEEDED';
-export const NAVIGATION_PAGES_READ_FAILED = 'NAVIGATION_PAGES_READ_FAILED';
+const NAVIGATION_PAGES_READ_REQUESTED = 'NAVIGATION_PAGES_READ_REQUESTED';
+const NAVIGATION_PAGES_READ_SUCCEEDED = 'NAVIGATION_PAGES_READ_SUCCEEDED';
+const NAVIGATION_PAGES_READ_FAILED = 'NAVIGATION_PAGES_READ_FAILED';
 
 const initialState = {
   loading: false,
@@ -16,21 +16,19 @@ export const navigationReducer = {
     switch (action.type) {
       case NAVIGATION_PAGES_READ_REQUESTED:
         return {
+          ...initialState,
           loading: true,
-          error: false,
-          pages: [],
         };
       case NAVIGATION_PAGES_READ_SUCCEEDED:
         return {
-          loading: false,
-          error: false,
-          pages: action.payload,
+          ...initialState,
+          pages: action.payload.pages,
         };
       case NAVIGATION_PAGES_READ_FAILED:
         return {
-          loading: false,
+          ...initialState,
           error: true,
-          pages: [],
+          errorMsg: action.payload.errorMsg,
         };
       default:
         return state;
@@ -38,38 +36,38 @@ export const navigationReducer = {
   },
 };
 
-export function readNavigationPages() {
+export function readPages() {
   return { type: NAVIGATION_PAGES_READ_REQUESTED };
 }
 
-function readNavigationPagesSuccess(payload) {
-  return { type: NAVIGATION_PAGES_READ_SUCCEEDED, payload };
+function readPagesSuccess(pages) {
+  return { type: NAVIGATION_PAGES_READ_SUCCEEDED, payload: { pages } };
 }
 
-function readNavigationPagesError() {
-  return { type: NAVIGATION_PAGES_READ_FAILED };
+function readPagesError(errorMsg) {
+  return { type: NAVIGATION_PAGES_READ_FAILED, payload: { errorMsg } };
 }
 
-function* readNavigationPagesAsync() {
+function* readPagesAsync() {
   try {
     const pages = yield call(pagesService.readAll);
-    yield put(readNavigationPagesSuccess(pages));
+    yield put(readPagesSuccess(pages));
   } catch (e) {
-    yield put(readNavigationPagesError(e.message));
+    yield put(readPagesError(e.message));
   }
 }
 
 export function* navigationSaga() {
-  yield takeLatest(NAVIGATION_PAGES_READ_REQUESTED, readNavigationPagesAsync);
+  yield takeLatest(NAVIGATION_PAGES_READ_REQUESTED, readPagesAsync);
 }
 
-export function selectNavigationPages(state) {
+export function selectPages(state) {
   return state.navigation.pages;
 }
 
 export default {
   navigationReducer,
   navigationSaga,
-  readNavigationPages,
-  selectNavigationPages,
+  readPages,
+  selectPages,
 };

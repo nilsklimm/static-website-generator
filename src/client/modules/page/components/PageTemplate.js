@@ -2,6 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 
 import { PrimaryHeadline, SecondaryHeadline } from '../../../components/Headline';
+import { FormRow } from '../../../components/FormRow';
 import { Button } from '../../../components/Button';
 
 export function PageTemplate({
@@ -36,28 +37,35 @@ export function PageTemplate({
     >
       <PrimaryHeadline>{title}</PrimaryHeadline>
 
-      <SecondaryHeadline>Slug</SecondaryHeadline>
+      <SecondaryHeadline>Slug (a-z 0-9)</SecondaryHeadline>
       <input
-        value={slug}
         onChange={onChangeHandler('slug')}
+        value={slug}
+        placeholder="Allowed characters: a-z 0-9"
+        pattern="[\w\d]+"
+        required
       />
 
       <SecondaryHeadline>Title</SecondaryHeadline>
       <input
-        value={title}
         onChange={onChangeHandler('title')}
+        value={title}
+        required
       />
 
       <SecondaryHeadline>Text</SecondaryHeadline>
       <textarea
-        value={text}
         onChange={onChangeHandler('text')}
+        value={text}
+        required
       />
       
       <hr />
-
-      <Button type="submit">Save</Button>
-      <Button type="reset">Reset</Button>
+      
+      <FormRow>
+        <Button type="submit">Save</Button>
+        <Button type="reset">Reset</Button> 
+      </FormRow>
     </form>
   );
 }

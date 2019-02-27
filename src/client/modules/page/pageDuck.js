@@ -1,6 +1,7 @@
 import { all, call, put, select, takeLatest } from 'redux-saga/effects';
+import { push } from 'connected-react-router';
 import { pagesService } from '../../services/pagesService';
-import { readNavigationPages } from '../navigation/navigationDuck';
+import { readPages } from '../navigation/navigationDuck';
 
 const PAGE_READ_REQUESTED = 'PAGE_READ_REQUESTED';
 const PAGE_READ_SUCCEEDED = 'PAGE_READ_SUCCEEDED';
@@ -10,8 +11,15 @@ const PAGE_UPDATE_REQUESTED = 'PAGE_UPDATE_REQUESTED';
 const PAGE_UPDATE_SUCCEEDED = 'PAGE_UPDATE_SUCCEEDED';
 const PAGE_UPDATE_FAILED = 'PAGE_UPDATE_FAILED';
 
-const PAGE_REVERT = 'PAGE_REVERT';
+const PAGE_REVERT_TEMP_CHANGES = 'PAGE_REVERT_TEMP_CHANGES';
 const PAGE_TEMP_FIELD_VALUE_CHANGE = 'PAGE_TEMP_FIELD_VALUE_CHANGE';
+
+const pageBlueprint = {
+  id: 'new',
+  slug: '',
+  title: '',
+  text: '',
+};
 
 const initialState = {
   loading: false,
@@ -32,20 +40,22 @@ export const pageReducer = {
       case PAGE_READ_SUCCEEDED:
         return {
           ...initialState,
-          page: action.payload,
-          tempPage: action.payload,
+          page: action.payload.page,
+          tempPage: action.payload.page,
         };
       case PAGE_READ_FAILED:
         return {
           ...initialState,
           error: true,
+          errorMsg: action.payload.errorMsg,
         };
       case PAGE_UPDATE_SUCCEEDED:
         return {
-          ...state,
+          ...initialState,
           page: state.tempPage,
+          tempPage: state.tempPage,
         };
-      case PAGE_REVERT:
+      case PAGE_REVERT_TEMP_CHANGES:
         return {
           ...state,
           tempPage: state.page,
@@ -69,17 +79,20 @@ export function readPage(pageId) {
   return { type: PAGE_READ_REQUESTED, payload: { pageId } };
 }
 
-function readPageSuccess(payload) {
-  return { type: PAGE_READ_SUCCEEDED, payload };
+function readPageSuccess(page) {
+  return { type: PAGE_READ_SUCCEEDED, payload: { page } };
 }
 
-function readPageError() {
-  return { type: PAGE_READ_FAILED };
+function readPageError(errorMsg) {
+  return { type: PAGE_READ_FAILED, payload: { errorMsg } };
 }
 
 function* readPageAsync(action) {
   try {
-    const page = yield call(pagesService.read, action.payload.pageId);
+    const { pageId } = action.payload;
+    const page = pageId === 'new'
+      ? pageBlueprint
+      : yield call(pagesService.read, action.payload.pageId);
     yield put(readPageSuccess(page));
   } catch (e) {
     yield put(readPageError(e.message));
@@ -94,23 +107,31 @@ function updatePageSuccess() {
   return { type: PAGE_UPDATE_SUCCEEDED };
 }
 
-function updatePageError() {
-  return { type: PAGE_UPDATE_FAILED };
+function updatePageError(errorMsg) {
+  return { type: PAGE_UPDATE_FAILED, payload: { errorMsg } };
 }
 
 function* updatePageAsync() {
   try {
     const page = yield select(selectPage);
-    yield call(pagesService.update, page.id, page);
-    yield put(updatePageSuccess());
-    yield put(readNavigationPages());
+    const pageId = page.id;
+
+    if (pageId === 'new') {
+      const { id: newPageId } = yield call(pagesService.create, page);
+      yield put(push(`/pages/${newPageId}`));
+    } else {
+      yield call(pagesService.update, pageId, page);
+      yield put(updatePageSuccess());
+    }
+
+    yield put(readPages());
   } catch (e) {
     yield put(updatePageError(e.message));
   }
 }
 
-export function revertPage() {
-  return { type: PAGE_REVERT };
+export function revertTempPage() {
+  return { type: PAGE_REVERT_TEMP_CHANGES };
 }
 
 export function changeTempFieldValue(fieldName, value) {

@@ -1,4 +1,5 @@
 import { extractProps } from '../../utils/extractProps';
+import uuid from 'uuid/v4';
 
 const indexRoute = (...paths) => paths.map(path => ({
   method: 'GET',
@@ -51,25 +52,22 @@ const routes = db => [
     handler: ({
       params: { pageId: id },
       payload,
-    }) => {
-      return db
-        .get('pages')
-        .find({ id })
-        .assign(extractProps(payload, allowedPageProps))
-        .write();
-    },
+    }) => db
+      .get('pages')
+      .find({ id })
+      .assign(extractProps(payload, allowedPageProps))
+      .write(),
   },
   {
     method: 'PUT',
     path: '/api/pages',
-    handler: ({ payload  }) => {
-      const id = Date.now();
-      return db
-        .get('pages')
-        .push({ id, ...extractProps(payload, allowedPageProps) })
-        .last()
-        .write();
-    },
+    handler: ({
+      payload,
+    }) => db
+      .get('pages')
+      .push({ ...extractProps(payload, allowedPageProps), id: uuid() })
+      .last()
+      .write(),
   },
 ];
 

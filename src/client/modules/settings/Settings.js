@@ -6,7 +6,7 @@ import {
   selectSettings,
   readSettings,
   updateSettings,
-  revertSettings,
+  revertTempSettings,
   changeTempFieldValue,
 } from './settingsDuck';
 
@@ -35,22 +35,8 @@ class Settings extends Component {
   }
 
   render() {
-    const {
-      actions: { updateSettings, revertSettings, changeFieldValue },
-      settings,
-    } = this.props;
-
-    return !!settings && (
-      <SettingsTemplate {...{
-        actions: {
-          updateSettings,
-          revertSettings,
-          changeFieldValue,
-        },
-        settings,
-      } }
-      />
-    );
+    const { actions, settings } = this.props;
+    return !!settings && <SettingsTemplate {...{ actions, settings }} />;
   }
 }
 
@@ -62,7 +48,7 @@ export default connect(
     actions: {
       readSettings: () => dispatch(readSettings()),
       updateSettings: () => dispatch(updateSettings()),
-      revertSettings: () => dispatch(revertSettings()),
+      revertSettings: () => dispatch(revertTempSettings()),
       changeFieldValue: (fieldName, value) => dispatch(changeTempFieldValue(fieldName, value)),
     },
   }),

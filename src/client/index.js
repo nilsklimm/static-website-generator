@@ -4,7 +4,7 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import { Provider } from 'react-redux';
 
-import { store } from './store';
+import { configureStore } from './store';
 import { App } from './App';
 
 import { initFetchMocks } from '../utils/initFetchMocks';
@@ -17,6 +17,8 @@ if (WEBPACK_ENV.isDev) {
   initFetchMocks(settingsMocks, pagesMocks);
   if (module.hot) module.hot.accept();
 }
+
+const store = configureStore();
 
 ReactDOM.render(
   <Provider store={store}>

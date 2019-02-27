@@ -3,7 +3,8 @@ import PropTypes from 'prop-types';
 import map from 'lodash.map';
 import startCase from 'lodash.startcase';
 
-import { PrimaryHeadline, SecondaryHeadline } from '../../../components/Headline'
+import { PrimaryHeadline, SecondaryHeadline } from '../../../components/Headline';
+import { FormRow } from '../../../components/FormRow';
 import { Button } from '../../../components/Button';
 
 export function SettingsTemplate({
@@ -38,16 +39,19 @@ export function SettingsTemplate({
         <Fragment key={key}>
           <SecondaryHeadline>{startCase(key)}</SecondaryHeadline>
           <input
-            value={value}
             onChange={onChangeHandler(key)}
+            value={value}
+            required
           />
         </Fragment>
       ))}
 
       <hr />
 
-      <Button type="submit">Save</Button>
-      <Button type="reset">Reset</Button>
+      <FormRow>
+        <Button type="submit">Save</Button>
+        <Button type="reset">Reset</Button> 
+      </FormRow>
     </form>
   );
 }

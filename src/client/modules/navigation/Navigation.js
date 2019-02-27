@@ -1,14 +1,16 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
+import { push } from 'connected-react-router';
 
-import { selectNavigationPages, readNavigationPages } from './navigationDuck';
+import { selectPages, readPages } from './navigationDuck';
 import { NavigationTemplate } from './components/NavigationTemplate';
 
 class Navigation extends Component {
   static propTypes = {
     actions: PropTypes.shape({
       readPages: PropTypes.func.isRequired,
+      newPage: PropTypes.func.isRequired,
     }).isRequired,
     pages: PropTypes.arrayOf(
       PropTypes.shape({
@@ -33,18 +35,19 @@ class Navigation extends Component {
   }
 
   render() {
-    const { pages } = this.props;
-    return <NavigationTemplate {...{ pages }} />;
+    const { actions, pages } = this.props;
+    return <NavigationTemplate {...{ actions, pages }} />;
   }
 }
 
 export default connect(
   state => ({
-    pages: selectNavigationPages(state),
+    pages: selectPages(state),
   }),
   dispatch => ({
     actions: {
-      readPages: () => dispatch(readNavigationPages()),
+      readPages: () => dispatch(readPages()),
+      newPage: () => dispatch(push('/pages/new')),
     },
   }),
 )(Navigation);
