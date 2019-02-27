@@ -1,8 +1,9 @@
 {
-  "name": "nilsklimm",
-  "version": "1.0.0",
+  "name": "static-website-generator",
+  "version": "0.0.4",
   "main": "index.js",
   "license": "MIT",
+  "author": "Nils Klimm <dev@nilsklimm.de>",
   "scripts": {
     "prepublishOnly": "npm run build",
     "postinstall": "npm run build",
