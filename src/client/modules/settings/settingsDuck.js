@@ -10,26 +10,14 @@ const SETTINGS_UPDATE_SUCCEEDED = 'SETTINGS_UPDATE_SUCCEEDED';
 const SETTINGS_UPDATE_FAILED = 'SETTINGS_UPDATE_FAILED';
 
 const SETTINGS_REVERT = 'SETTINGS_REVERT';
-
 const SETTINGS_TEMP_FIELD_VALUE_CHANGE = 'SETTINGS_TEMP_FIELD_VALUE_CHANGE';
-
-/*
-const settingsService = {
-  read: async () => ({
-    siteName: 'My Site',
-  }),
-  update: async () => ({
-    message: 'updateing settings was successful',
-  }),
-}
-*/
 
 const initialState = {
   loading: false,
   error: false,
   modified: false,
-  settings: {},
-  tempSettings: {},
+  settings: undefined,
+  tempSettings: undefined,
 };
 
 export const settingsReducer = {

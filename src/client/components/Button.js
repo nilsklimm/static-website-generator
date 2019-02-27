@@ -1,23 +1,23 @@
-import React from 'react';
+/** @jsx jsx */
 import PropTypes from 'prop-types';
+import { css, jsx } from '@emotion/core';
 
-export function Button({
-  children,
-  type,
-}) {
+export function Button(props) {
   return (
-    <button {...{ type }}>
-      {children}
-    </button>
+    <button {...{
+      ...props,
+      css: css`
+        margin: 0 .5em .5em 0;
+        padding: .5em 1em;
+      `,
+    }} />
   );
 }
 
 Button.propTypes = {
-  children: PropTypes.node,
-  type: PropTypes.oneOf(['button', 'submit']),
+  type: PropTypes.oneOf(['button', 'submit', 'reset']),
 };
 
 Button.defaultProps = {
-  children: undefined,
   type: 'button',
 };

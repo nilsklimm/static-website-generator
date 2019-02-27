@@ -10,7 +10,7 @@ import {
   changeTempFieldValue,
 } from './pageDuck';
 
-import { PageTemplate } from './PageTemplate';
+import { PageTemplate } from './components/PageTemplate';
 
 class Page extends Component {
   static propTypes = {
@@ -23,8 +23,9 @@ class Page extends Component {
       pageId: PropTypes.string.isRequired,
     }).isRequired,
     page: PropTypes.shape({
+      slug: PropTypes.string.isRequired,
       title: PropTypes.string.isRequired,
-      body: PropTypes.string.isRequired,
+      text: PropTypes.string.isRequired,
     }),
   }
   

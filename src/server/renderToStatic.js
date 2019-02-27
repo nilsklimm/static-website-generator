@@ -1,43 +1,43 @@
-const fs = require('fs');
-const React = require('react');
-const { renderToString } = require('react-dom/server');
-const { configureDatabase, defaultDbPath, defaultDbData } = require('./config/database');
-const { StaticPage } = require('../client/components/StaticPage');
+import fs from 'fs';
+import React from 'react';
+import { renderToString } from 'react-dom/server';
+import { renderStylesToString } from 'emotion-server';
 
-const db = configureDatabase(defaultDbPath, defaultDbData);
+import { configureDatabase, defaultDBPath, defaultDBData } from './config/database';
+import { StaticPage } from '../client/components/StaticPage';
+
+const db = configureDatabase(defaultDBPath, defaultDBData);
 const { siteName } = db.get('settings').value();
 const pages = db.get('pages').value();
 
 console.log('Number of pages:', pages.length);
 
 pages.forEach((page) => {
-  const { id: pageId } = page;
+  const { id: pageId, slug } = page;
 
-  console.log(`rendering html for page ${pageId}`);
+  console.log(`rendering html for page ${slug}`);
 
   const linkList = pages.map(({
     id: linkId,
+    slug,
     title: label,
   }) => ({
-    url: `${linkId}.html`,
+    url: `${slug}.html`,
     label,
     current: linkId === pageId,
   }));
 
-  const reactDom = renderToString(
-    React.createElement(
-      StaticPage,
-      { siteName, linkList, page },
-    )
-  );
+  const reactDom = renderStylesToString(renderToString(
+    <StaticPage {...{ siteName, linkList, page }} />
+  ));
 
-  if (pageId.match(/^\w+$/)) {
-    const path = process.cwd() + `/STATIC/${pageId}.html`;
+  if (slug.match(/^\w+$/)) {
+    const path = process.cwd() + `/STATIC/${slug}.html`;
     const html = `<!DOCTYPE html>${reactDom}`;
     
     fs.writeFile(path, html, (err) => {
       if (err) throw err;
-      console.log(`${pageId}.html saved!`);
+      console.log(`${slug}.html saved!`);
     });
   }
 });

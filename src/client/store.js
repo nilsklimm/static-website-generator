@@ -9,7 +9,7 @@ import { pageSaga, pageReducer } from './modules/page/pageDuck';
 
 const sagaMiddleware = createSagaMiddleware();
 
-export default createStore(
+export const store = createStore(
   combineReducers({
     ...navigationReducer,
     ...settingsReducer,

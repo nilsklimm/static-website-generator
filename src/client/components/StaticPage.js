@@ -8,7 +8,7 @@ export function StaticPage({
   linkList,
   page: {
     title,
-    body,
+    text,
   },
 }) {
   return (
@@ -19,7 +19,7 @@ export function StaticPage({
       <body>
         <LinkList list={linkList} />
         <h1>{title}</h1>
-        <p>{body}</p>
+        <p>{text}</p>
       </body>
     </html>
   );
@@ -33,6 +33,6 @@ StaticPage.propTypes = {
   })).isRequired,
   page: PropTypes.shape({
     title: PropTypes.string.isRequired,
-    body: PropTypes.string.isRequired,
+    text: PropTypes.string.isRequired,
   }),
 };

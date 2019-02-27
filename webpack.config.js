@@ -5,7 +5,10 @@ const HtmlWebpackPlugin = require('html-webpack-plugin');
 module.exports = env => {
   const { NODE_ENV = 'developement' } = env;
 
-  const ifDev = (yes, no) => NODE_ENV === 'developement' ? yes : no;
+  const isProd = NODE_ENV === 'production';
+  const isDev = !isProd;
+
+  const whenDev = (yes, no) => NODE_ENV === 'developement' ? yes : no;
 
   return {
     entry: {
@@ -30,7 +33,7 @@ module.exports = env => {
       publicPath: '/',
     },
     plugins: [
-      ...ifDev([new webpack.HotModuleReplacementPlugin()], []),
+      ...whenDev([new webpack.HotModuleReplacementPlugin()], []),
       new CircularDependencyPlugin({
         exclude: /a\.js|node_modules/,
         failOnError: true,
@@ -44,6 +47,8 @@ module.exports = env => {
       new webpack.DefinePlugin({
         'WEBPACK_ENV': JSON.stringify({
           mode: NODE_ENV,
+          isDev,
+          isProd,
         }),
       }),
     ],

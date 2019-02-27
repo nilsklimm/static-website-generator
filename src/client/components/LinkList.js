@@ -6,9 +6,9 @@ import { Link } from './Link';
 export function LinkList({ list, LinkComponent }) {
   return list.length > 0 && (
     <ul>
-      {list.map(({ url, label }) => (
+      {list.map(({ url, label, current }) => (
         <li key={url}>
-          <LinkComponent href={url}>
+          <LinkComponent {...{ href: url, current }}>
             {label}
           </LinkComponent>
         </li>

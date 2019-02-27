@@ -10,7 +10,7 @@ import {
   changeTempFieldValue,
 } from './settingsDuck';
 
-import { SettingsTemplate } from './SettingsTemplate';
+import { SettingsTemplate } from './components/SettingsTemplate';
 
 class Settings extends Component {
   static propTypes = {

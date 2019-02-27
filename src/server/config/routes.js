@@ -1,4 +1,4 @@
-const extractProps = require('../utils/extractProps');
+import { extractProps } from '../../utils/extractProps';
 
 const indexRoute = (...paths) => paths.map(path => ({
   method: 'GET',
@@ -7,10 +7,10 @@ const indexRoute = (...paths) => paths.map(path => ({
 }));
 
 const allowedSettingsProps = ['siteName'];
-const allowedPageProps = ['slug', 'title', 'body'];
+const allowedPageProps = ['slug', 'title', 'text'];
 
 const routes = db => [
-  ...indexRoute('/', '/settings', '/page/{pageId}'),
+  ...indexRoute('/', '/settings', '/pages/{pageId}'),
   {
     method: 'GET',
     path: '/bundle.js',
@@ -73,10 +73,6 @@ const routes = db => [
   },
 ];
 
-function configureRoutes(server, db) {
+export function configureRoutes(server, db) {
   routes(db).forEach(route => server.route(route));
 }
-
-module.exports = {
-  configureRoutes,
-};

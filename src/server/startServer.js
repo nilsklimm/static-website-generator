@@ -1,8 +1,8 @@
-const Hapi = require('hapi');
-const { configureDatabase, defaultDbPath, defaultDbData } = require('./config/database');
-const { configureRoutes } = require('./config/routes');
+import Hapi from 'hapi';
+import { configureDatabase, defaultDBPath, defaultDBData } from './config/database';
+import { configureRoutes } from './config/routes';
 
-const db = configureDatabase(defaultDbPath, defaultDbData);
+const db = configureDatabase(defaultDBPath, defaultDBData);
 
 const server = Hapi.server({
   port: 8080,

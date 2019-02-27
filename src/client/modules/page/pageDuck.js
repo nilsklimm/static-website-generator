@@ -1,5 +1,6 @@
 import { all, call, put, select, takeLatest } from 'redux-saga/effects';
 import { pagesService } from '../../services/pagesService';
+import { readNavigationPages } from '../navigation/navigationDuck';
 
 const PAGE_READ_REQUESTED = 'PAGE_READ_REQUESTED';
 const PAGE_READ_SUCCEEDED = 'PAGE_READ_SUCCEEDED';
@@ -10,45 +11,14 @@ const PAGE_UPDATE_SUCCEEDED = 'PAGE_UPDATE_SUCCEEDED';
 const PAGE_UPDATE_FAILED = 'PAGE_UPDATE_FAILED';
 
 const PAGE_REVERT = 'PAGE_REVERT';
-
 const PAGE_TEMP_FIELD_VALUE_CHANGE = 'PAGE_TEMP_FIELD_VALUE_CHANGE';
-
-/*
-const pageService = {
-  read: async (pageId) => {
-    switch (pageId) {
-      case 'page1':
-        return {
-          title: 'My first Page',
-          content: [
-            { type: 'p', text: 'First textbock' },
-            { type: 'p', text: 'Second textbock' },
-          ]
-        };
-      case 'page2':
-        return {
-          title: 'My second Page',
-          content: [
-            { type: 'p', text: 'First textbock' },
-            { type: 'p', text: 'Second textbock' },
-          ]
-        };
-      default:
-        throw new Error(`Page ${pageId} not found`);
-    }
-  },
-  update: async () => ({
-    message: 'updateing page was successful',
-  }),
-}
-*/
 
 const initialState = {
   loading: false,
   error: false,
   modified: false,
-  page: {},
-  tempPage: {},
+  page: undefined,
+  tempPage: undefined,
 };
 
 export const pageReducer = {
@@ -133,6 +103,7 @@ function* updatePageAsync() {
     const page = yield select(selectPage);
     yield call(pagesService.update, page.id, page);
     yield put(updatePageSuccess());
+    yield put(readNavigationPages());
   } catch (e) {
     yield put(updatePageError(e.message));
   }

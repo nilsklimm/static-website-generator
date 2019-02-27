@@ -1,28 +1,27 @@
-import React from 'react';
+/** @jsx jsx */
 import PropTypes from 'prop-types';
+import { css, jsx } from '@emotion/core';
 
 export function Link({
-  children,
-  href,
   current,
+  ...restProps
 }) {
   return (
     <a {...{
-      href,
+      ...restProps,
       'aria-current': current ? 'page' : null,
-    }}>
-      {children}
-    </a>
+      css: css`
+        color: red;
+      `,
+    }} />
   );
 }
 
 Link.propTypes = {
-  children: PropTypes.node,
   href: PropTypes.string.isRequired,
   current: PropTypes.bool,
 };
 
 Link.defaultProps = {
-  children: undefined,
   current: false,
 };

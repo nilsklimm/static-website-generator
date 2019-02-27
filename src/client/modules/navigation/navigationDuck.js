@@ -5,15 +5,6 @@ export const NAVIGATION_PAGES_READ_REQUESTED = 'NAVIGATION_PAGES_READ_REQUESTED'
 export const NAVIGATION_PAGES_READ_SUCCEEDED = 'NAVIGATION_PAGES_READ_SUCCEEDED';
 export const NAVIGATION_PAGES_READ_FAILED = 'NAVIGATION_PAGES_READ_FAILED';
 
-/*
-const pagesService = {
-  read: async () => ([
-    { id: 'page1', title: 'My first Page' },
-    { id: 'page2', title: 'My second Page' },
-  ]),
-}
-*/
-
 const initialState = {
   loading: false,
   error: false,
@@ -47,8 +38,8 @@ export const navigationReducer = {
   },
 };
 
-export function readNavigationPages(pageId) {
-  return { type: NAVIGATION_PAGES_READ_REQUESTED, payload: { pageId } };
+export function readNavigationPages() {
+  return { type: NAVIGATION_PAGES_READ_REQUESTED };
 }
 
 function readNavigationPagesSuccess(payload) {

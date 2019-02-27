@@ -1,36 +1,14 @@
-const low = require('lowdb');
-const FileSync = require('lowdb/adapters/FileSync');
+import low from 'lowdb';
+import FileSync from 'lowdb/adapters/FileSync';
 
-const defaultDbPath =  __dirname + '/../db.json';
+export { defaultDBData } from './defaultDBData';
 
-const defaultDbData = {
-  settings: {
-    siteName: 'Static Website Generator',
-  },
-  pages: [
-    {
-      id: 'demo1',
-      title: 'Demo Page 1',
-      body: 'Lorem ipsum dolor sit amet',
-    },
-    {
-      id: 'demo2',
-      title: 'Demo Page 2',
-      body: 'Consetetur sadipscing elitr',
-    },
-  ],
-};
+export const defaultDBPath = `${process.cwd()}/DATA.json`;
 
-function configureDatabase(databaseFile, defaults) {
+export function configureDatabase(databaseFile, defaults) {
   const adapter = new FileSync(databaseFile);
   const db = low(adapter);
 
   db.defaults(defaults).write();
   return db;
 }
-
-module.exports = {
-  defaultDbPath,
-  defaultDbData,
-  configureDatabase,
-};

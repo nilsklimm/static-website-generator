@@ -3,9 +3,9 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 
 import { selectNavigationPages, readNavigationPages } from './navigationDuck';
-import { NavigationTemplate } from './NavigationTemplate';
+import { NavigationTemplate } from './components/NavigationTemplate';
 
-class Pages extends Component {
+class Navigation extends Component {
   static propTypes = {
     actions: PropTypes.shape({
       readPages: PropTypes.func.isRequired,
@@ -24,12 +24,12 @@ class Pages extends Component {
 
   componentDidMount() {
     const {
-      actions: { readNavigationPages },
+      actions: { readPages },
       pages,
     } = this.props;
     
     if (pages.length === 0)
-      readNavigationPages();
+    readPages();
   }
 
   render() {
@@ -44,7 +44,7 @@ export default connect(
   }),
   dispatch => ({
     actions: {
-      readNavigationPages: pageId => dispatch(readNavigationPages(pageId)),
+      readPages: () => dispatch(readNavigationPages()),
     },
   }),
-)(Pages);
+)(Navigation);
